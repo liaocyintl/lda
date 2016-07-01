@@ -28,7 +28,10 @@ public class Test {
         }
     
         //Average distance of overlaps in each topic distribution (the smaller the better)
-        //double avgdis = lda.getAvgDis();
+        TopicDensity td = new TopicDensity(lda);
+        double avgdis = td.AveDis();
+        double perplexity1 = td.Perplexity1();
+        double perplexity2 = td.Perplexity2();
         
         
         int docid, topicid, wordid;
