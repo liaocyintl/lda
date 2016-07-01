@@ -10,22 +10,23 @@ import java.util.*;
 
 public class LDA {
 
-    int D; // number of document
-    int T; // number of topic
-    int V; // number of unique word (vocabulary)
-    int wordCount[][];
-    int docCount[][];
-    int topicCount[];
+    public int D; // number of document
+    public int T; // number of topic
+    public int V; // number of unique word (vocabulary)
+    public int wordCount[][];
+    public int docCount[][];
+    public int topicCount[];
+    public int docSize[];
     // hyper parameter
-    double alpha, beta;
-    Token tokens[];
-    double P[];
+    public double alpha, beta;
+    public Token tokens[];
+    public double P[];
     // topic assignment
-    int z[];
-    Random rand;
+    public int z[];
+    public Random rand;
     
-    List<Integer> docs;
-    List<Integer> words;
+    public List<Integer> docs;
+    public List<Integer> words;
 
     public LDA(int topicNum, List<Token> tlist) {
         int documentNum = 0, vocabularyNum = 0;
@@ -58,6 +59,7 @@ public class LDA {
         wordCount = new int[V][T];
         topicCount = new int[T];
         docCount = new int[D][T];
+        docSize = new int[D];
         tokens = tlist.toArray(new Token[0]);
         z = new int[tokens.length];
         this.alpha = alpha;
@@ -70,6 +72,7 @@ public class LDA {
             int assign = rand.nextInt(T);
             wordCount[t.wordId][assign]++;
             docCount[t.docId][assign]++;
+            docSize[t.docId]++;
             topicCount[assign]++;
             z[i] = assign;
         }

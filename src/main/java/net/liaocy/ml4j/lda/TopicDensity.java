@@ -1,7 +1,5 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ *  license MIT
  */
 package net.liaocy.ml4j.lda;
 
@@ -14,6 +12,10 @@ public class TopicDensity {
     double[][] theta;
     double[][] phi;
     
+    /**
+     *
+     * @param lda
+     */
     public TopicDensity(LDA lda){
         this.lda = lda;
         CaculateTheta();
@@ -62,40 +64,49 @@ public class TopicDensity {
         return temp / (Math.sqrt(temp1) * Math.sqrt(temp2));
     }
     
-    private double[][] DocWordProb(){
-        double[][] docwordProb = new double[lda.D][lda.V];
-        for (Token token : lda.tokens) {
-            docwordProb[token.docId][token.wordId] += 1;
-        }
-        for(int d = 0; d < lda.D; d++){
-            for(int v = 0; v < lda.V; v++){
-                if(docwordProb[d][v] == .0){
-                    continue;
-                }
-                for(int t = 0; t < lda.T; t++){
-                    docwordProb[d][v] += theta[d][t] * phi[t][v] * docwordProb[d][v];
-                }
-            }
-        }
-        return docwordProb;
-    }
-    
-    public double Perplexity(){
-        double[][] docwordProb = DocWordProb();
+    /**
+     * A parameter optimation method from https://github.com/skitaoka/nlp-fun/blob/master/floodgate/LDA.java
+     * @return double: the value of perplexity
+     */
+    public double Perplexity1(){
         double perplexity = 0.0;
-        for(int d = 0; d > lda.D; d++){
-            
-            for(int v = 0; v < lda.V; v++){
-                if(docwordProb[d][v] == .0){
-                    continue;
-                }
-                perplexity += Math.log(docwordProb[d][v]);
+        for (Token token : lda.tokens) {
+            double prob = .0;
+            for(int t = 0; t < lda.T; t++){
+                prob += theta[token.docId][t] * phi[t][token.wordId];
             }
+            
+            perplexity += Math.log(prob);
         }
         perplexity = -(perplexity / lda.tokens.length);
         return Math.exp(perplexity);
     }
     
+    /**
+     * A version from https://github.com/tedunderwood/LDA
+     * @return double: the value of perplexity
+     */
+    public double Perplexity2(){
+        double perplexity = 0.0;
+        int i = 0;
+        for (Token token : lda.tokens) {
+            int word = token.wordId;
+            int doc = token.docId;
+            int t = lda.z[i];
+            double prob = ((lda.docCount[doc][t] + 1) / lda.docSize[doc] + lda.D) * ((lda.wordCount[word][t] + 1) / (lda.topicCount[t] + lda.V));
+            
+            perplexity += Math.log(prob);
+            
+            i++;
+        }
+        perplexity = -(perplexity / lda.tokens.length);
+        return Math.exp(perplexity);
+    }
+    
+    /**
+     *
+     * @return
+     */
     public double AveDis(){
         double temp = .0;
         for(int t1 = 0; t1 < this.lda.T; t1++){
@@ -124,6 +135,12 @@ public class TopicDensity {
         return densities;
     }
     
+    /**
+     *
+     * @param densities
+     * @param n
+     * @return
+     */
     public int Cardinality(int[] densities, int n){
         int cardinality = 0;
         for(int t = 0; t < this.lda.T; t++){
@@ -134,6 +151,10 @@ public class TopicDensity {
         return cardinality;
     }
     
+    /**
+     *
+     * @return
+     */
     public double MainProcess(){
         double perplexity = 0.0;
         
