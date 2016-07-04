@@ -118,11 +118,11 @@ public class LDA {
         for (int i = 0; i < D; ++i) {
             double sum = 0.0;
             for (int j = 0; j < T; ++j) {
-                theta[i][j] = alpha + docCount[i][j];
+                theta[i][j] = docCount[i][j] + alpha;
                 sum += theta[i][j];
             }
             // normalize
-            double sinv = 1.0 / sum;
+            double sinv = 1.0 / (sum + T * alpha);
             for (int j = 0; j < T; ++j) {
                 theta[i][j] *= sinv;
             }
@@ -144,11 +144,11 @@ public class LDA {
         for (int i = 0; i < T; ++i) {
             double sum = 0.0;
             for (int j = 0; j < V; ++j) {
-                phi[i][j] = beta + wordCount[j][i];
+                phi[i][j] = wordCount[j][i] + beta;
                 sum += phi[i][j];
             }
             // normalize
-            double sinv = 1.0 / sum;
+            double sinv = 1.0 / (sum + V * beta);
             for (int j = 0; j < V; ++j) {
                 phi[i][j] *= sinv;
             }
