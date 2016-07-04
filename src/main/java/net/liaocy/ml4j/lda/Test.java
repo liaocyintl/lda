@@ -21,7 +21,7 @@ public class Test {
         tokens.add(new Token(27, 2));
         //.....
         
-        LDA lda = new LDA(100, tokens);
+        LDA lda = new LDA(100, 0.1, 0.1, tokens);
         
         for(int k = 0; k < 1000; k++){
             lda.GibbsSampling();

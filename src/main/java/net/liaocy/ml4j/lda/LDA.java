@@ -28,7 +28,7 @@ public class LDA {
     public List<Integer> docs;
     public List<Integer> words;
 
-    public LDA(int topicNum, List<Token> tlist) {
+    public LDA(int topicNum, double alpha, double beta, List<Token> tlist) {
         int documentNum = 0, vocabularyNum = 0;
         
         docs = new ArrayList<>();
@@ -47,7 +47,7 @@ public class LDA {
             newtlist.add(new Token(docs.indexOf(token.docId), words.indexOf(token.wordId)));
         }
         
-        this.init(documentNum, topicNum, vocabularyNum, newtlist, 50.0 / topicNum, 0.1, 666);
+        this.init(documentNum, topicNum, vocabularyNum, newtlist, alpha, beta, 666);
     }
 
     private void init(int documentNum, int topicNum, int vocabularyNum, List<Token> tlist,
